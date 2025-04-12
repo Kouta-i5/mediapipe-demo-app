@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import { Patient, Record } from '../types/models';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
+import uuid from 'react-native-uuid';
 
 // ファイルパス定義
 const PATIENTS_PATH = `${FileSystem.documentDirectory}patients.json`;
@@ -32,14 +33,14 @@ export async function getPatients(): Promise<Patient[]> {
   return readJsonFile<Patient>(PATIENTS_PATH);
 }
 
-// 新しい患者を追加（UUIDや日時も自動生成）
 export async function addPatient(
   input: Omit<Patient, 'id' | 'patientId' | 'createdAt'>
 ): Promise<Patient> {
-  const uuid = uuidv4();
+  const uuidStr = uuid.v4() as string;
+
   const newPatient: Patient = {
-    id: uuid,
-    patientId: `PT-${uuid.slice(0, 8)}`,
+    id: uuidStr,
+    patientId: `PT-${uuidStr.slice(0, 8)}`,
     createdAt: new Date().toISOString(),
     ...input,
   };
@@ -64,8 +65,10 @@ export async function getRecords(): Promise<Record[]> {
 export async function addRecord(
   input: Omit<Record, 'id' | 'timestamp'>
 ): Promise<Record> {
+  const uuidStr = uuid.v4() as string;
+
   const newRecord: Record = {
-    id: uuidv4(),
+    id: uuidStr,
     timestamp: new Date().toISOString(),
     ...input,
   };
