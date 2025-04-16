@@ -1,16 +1,34 @@
-export type RootStackParamList = {
+import { Condition } from './models';
+export type HomeStackParamList = {
   Home: undefined;
   PatientForm: undefined;
-  VideoCapture: {
-    patientName: string;
-    patientAge: number;
+  ConditionInput: {
     patientId: string;
+    patientName: string;
+  };
+  VideoCapture: {
+    patientId: string;
+    condition: Condition;
   };
   Confirm: {
-    patientName: string;
-    patientAge: number;
-    patientId: string;
     videoUri: string;
+    patientId: string;
+    condition: Condition;
+  };
+  VideoList: undefined;
+};
+
+export type PatientListStackParamList = {
+  PatientList: undefined;
+  PatientDetail: {
+    patientId: string;
+  };
+};
+
+export type VideoListStackParamList = {
+  VideoList: undefined;
+  VideoDetail: {
+    recordId: string;
   };
 };
 
