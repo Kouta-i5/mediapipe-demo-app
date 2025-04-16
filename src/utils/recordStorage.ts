@@ -23,8 +23,20 @@ export async function addRecord(input: RecordCreateSchema): Promise<RecordSchema
   return newRecord;
 }
 
-export async function deleteRecord(uuid: string): Promise<void> {
+export async function deleteRecordAndFile(uuid: string): Promise<void> {
   const records = await getRecords();
+  const target = records.find((r) => r.uuid === uuid);
+
+  if (!target) return;
+
+  // 動画ファイル削除（失敗しても無視）
+  try {
+    await FileSystem.deleteAsync(target.videoPath, { idempotent: true });
+  } catch (err) {
+    console.warn('動画ファイルの削除に失敗:', err);
+  }
+
+  // JSONから該当レコードを削除
   const updated = records.filter((r) => r.uuid !== uuid);
   await writeJsonFile(RECORDS_PATH, updated);
 }

@@ -1,10 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import * as FileSystem from 'expo-file-system';
 import { RecordSchema } from '../types/models';
 
-export default function VideoCard({ record }: { record: RecordSchema }) {
+type Props = {
+  record: RecordSchema;
+  onDelete: (uuid: string) => void;
+};
+
+export default function VideoCard({ record, onDelete }: Props) {
   const uri = record.videoPath.startsWith('file://') ? record.videoPath : FileSystem.documentDirectory + record.videoPath;
   const player = useVideoPlayer(uri, (player) => {
     player.loop = true;
@@ -14,15 +19,26 @@ export default function VideoCard({ record }: { record: RecordSchema }) {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>患者ID: {record.patientId}</Text>
-      <Text style={styles.label}>撮影日: {new Date(record.createdAt).toLocaleDateString()}</Text>
-      {condition && (
-        <>
-          <Text style={styles.conditionText}>足場: {condition.footCondition}</Text>
-          <Text style={styles.conditionText}>立ち方: {condition.standingCondition}</Text>
-          <Text style={styles.conditionText}>開脚幅: {condition.legWidth} cm</Text>
-        </>
-      )}
+      <View style={styles.header}>
+        <View style={styles.info}>
+          <Text style={styles.label}>動画ID: {record.uuid}</Text>
+          <Text style={styles.label}>患者ID: {record.patientId}</Text>
+          <Text style={styles.label}>撮影日: {new Date(record.createdAt).toLocaleDateString()}</Text>
+          {condition && (
+            <>
+              <Text style={styles.conditionText}>足場: {condition.footCondition}</Text>
+              <Text style={styles.conditionText}>立ち方: {condition.standingCondition}</Text>
+              <Text style={styles.conditionText}>開脚幅: {condition.legWidth} cm</Text>
+            </>
+          )}
+        </View>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => onDelete(record.uuid)}
+        >
+          <Text style={styles.deleteButtonText}>削除</Text>
+        </TouchableOpacity>
+      </View>
       <VideoView
         style={styles.video}
         player={player}
@@ -42,12 +58,30 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: '#f9f9f9',
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  info: {
+    flex: 1,
+  },
   label: { fontSize: 16, fontWeight: 'bold' },
   conditionText: { fontSize: 14, marginTop: 2 },
   video: {
     height: 200,
     width: '100%',
-    marginTop: 12,
     backgroundColor: '#000',
+  },
+  deleteButton: {
+    backgroundColor: '#ff3b30',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
