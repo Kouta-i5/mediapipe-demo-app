@@ -13,12 +13,12 @@ const Stack = createNativeStackNavigator<HomeStackParamList>();
 export default function HomeStackNavigator() {
   return (
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeScreen} />
-      <Stack.Screen name="PatientForm" options={{ headerShown: false }} component={PatientFormScreen} />
-      <Stack.Screen name="ConditionInput" options={{ headerShown: false }} component={ConditionInputScreen} />
-      <Stack.Screen name="VideoCapture" options={{ headerShown: false }} component={VideoCaptureScreen} />
-      <Stack.Screen name="Confirm" options={{ headerShown: false }} component={ConfirmScreen} />
-      <Stack.Screen name="VideoList" options={{ headerShown: false }} component={VideoListScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="PatientForm" component={PatientFormScreen} />
+      <Stack.Screen name="ConditionInput" component={ConditionInputScreen} />
+      <Stack.Screen name="VideoCapture" component={VideoCaptureScreen} />
+      <Stack.Screen name="Confirm" component={ConfirmScreen} />
+      <Stack.Screen name="VideoList" component={VideoListScreen} />
     </Stack.Navigator>
   );
 }

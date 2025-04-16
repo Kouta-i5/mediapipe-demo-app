@@ -12,9 +12,9 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName="HomeTab">
-        <Tab.Screen name="HomeTab" component={HomeStackNavigator} options={{ title: 'ホーム' }} />
-        <Tab.Screen name="PatientsTab" component={PatientListNavigator} options={{ title: '患者一覧' }} />
-        <Tab.Screen name="VideosTab" component={VideoListScreen} options={{ title: '動画一覧' }} />
+        <Tab.Screen name="HomeTab" component={HomeStackNavigator} options={{ headerShown: false }} />
+        <Tab.Screen name="PatientsTab" component={PatientListNavigator} options={{ headerShown: false }} />
+        <Tab.Screen name="VideosTab" component={VideoListScreen} options={{ headerShown: false }} />
       </Tab.Navigator>
     </NavigationContainer>
   );

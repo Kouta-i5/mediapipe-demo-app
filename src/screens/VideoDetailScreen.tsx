@@ -7,7 +7,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { Video, ResizeMode } from 'expo-av';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import * as FileSystem from 'expo-file-system';
 import { getRecords } from '../utils/recordStorage';
 import { RecordSchema } from '../types/models';
 import { VideoListStackParamList } from '../types/navigation';
@@ -47,18 +48,26 @@ export default function VideoDetailScreen() {
     );
   }
 
+  const videoUri = record.videoPath.startsWith('file://') || record.videoPath.startsWith('http')
+    ? record.videoPath
+    : FileSystem.documentDirectory + record.videoPath;
+
+  const player = useVideoPlayer(videoUri, (player) => {
+    player.loop = true;
+    player.play();
+  });
+
   const condition = record.conditions?.[0];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>動画詳細</Text>
 
-      <Video
+      <VideoView
         style={styles.video}
-        source={{ uri: record.videoPath }}
-        useNativeControls
-        resizeMode={ResizeMode.CONTAIN}
-        isLooping
+        player={player}
+        allowsFullscreen
+        allowsPictureInPicture
       />
 
       <View style={styles.info}>

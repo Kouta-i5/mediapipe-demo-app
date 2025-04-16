@@ -9,8 +9,8 @@ const Stack = createNativeStackNavigator<PatientListStackParamList>();
     export default function PatientListNavigator() {
   return (
     <Stack.Navigator initialRouteName="PatientList">
-      <Stack.Screen name="PatientList" options={{ headerShown: false }} component={PatientListScreen} />
-      <Stack.Screen name="PatientDetail" options={{ headerShown: false }} component={PatientDetailScreen} />
+      <Stack.Screen name="PatientList" component={PatientListScreen} />
+      <Stack.Screen name="PatientDetail" component={PatientDetailScreen} />
     </Stack.Navigator>
   );
 }

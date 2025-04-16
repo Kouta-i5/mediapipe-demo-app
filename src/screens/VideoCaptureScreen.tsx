@@ -1,11 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, Button, Text, Alert } from 'react-native';
 import {
-  MediapipeCamera,
-  useObjectDetection,
-  RunningMode,
-} from 'react-native-mediapipe';
-import {
   Camera,
   useCameraDevice,
   useCameraFormat,
@@ -39,17 +34,6 @@ export default function VideoCaptureScreen() {
     { videoResolution: { width: 1920, height: 1080 } },
     { fps: 30 },
   ]);
-
-  const solution = useObjectDetection(
-    (result) => {
-      if (recording) {
-        console.log('検出結果:', result);
-      }
-    },
-    (error) => console.error('Mediapipe エラー:', error),
-    RunningMode.VIDEO,
-    'efficientdet_lite0.tflite'
-  );
 
   useEffect(() => {
     (async () => {

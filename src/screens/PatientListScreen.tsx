@@ -12,7 +12,6 @@ import { getPatients, deletePatient } from '../utils/patientStorage';
 import { PatientSchema } from '../types/models';
 import { useNavigation } from '@react-navigation/native';
 import { PatientListStackParamList } from '../types/navigation';
-import PatientListNavigator from '../navigation/PatientListNavigator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export default function PatientListScreen() {

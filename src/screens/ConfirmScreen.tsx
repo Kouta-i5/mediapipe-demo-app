@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+// ConfirmScreen.tsx
+import React from 'react';
 import { View, StyleSheet, Text, Button, Alert } from 'react-native';
-import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { HomeStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { addRecord } from '../utils/recordStorage'; // ← 必要に応じて
-import { Condition } from '../types/models';
+import { addRecord } from '../utils/recordStorage';
+import * as FileSystem from 'expo-file-system';
+import { useVideoPlayer, VideoView } from 'expo-video';
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Confirm'>;
 
@@ -13,20 +14,29 @@ export default function ConfirmScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
   const { videoUri, patientId, condition } = route.params as HomeStackParamList['Confirm'];
-  const [videoStatus, setVideoStatus] = useState<AVPlaybackStatus>({} as AVPlaybackStatus);
+
+  const resolvedUri =
+    videoUri.startsWith('file://') || videoUri.startsWith('http')
+      ? videoUri
+      : FileSystem.documentDirectory + videoUri;
+
+  const player = useVideoPlayer(resolvedUri, (player) => {
+    player.loop = true;
+    player.play();
+  });
 
   const handleSave = async () => {
     try {
       await addRecord({
         patientId,
-        videoPath: videoUri,
+        videoPath: videoUri, // 相対パスで保存
         conditions: [condition],
       });
 
       Alert.alert('保存完了', '動画の保存が完了しました。', [
         {
           text: 'OK',
-          onPress: () => navigation.navigate('Home'),
+          onPress: () => navigation.navigate('VideoList'),
         },
       ]);
     } catch (error) {
@@ -44,13 +54,11 @@ export default function ConfirmScreen() {
         <Text style={styles.patientText}>開脚幅: {condition.legWidth} cm</Text>
       </View>
 
-      <Video
+      <VideoView
         style={styles.video}
-        source={{ uri: videoUri }}
-        useNativeControls
-        resizeMode={ResizeMode.CONTAIN}
-        isLooping
-        onPlaybackStatusUpdate={status => setVideoStatus(() => status)}
+        player={player}
+        allowsFullscreen
+        allowsPictureInPicture
       />
 
       <View style={styles.buttonContainer}>
@@ -85,10 +93,11 @@ const styles = StyleSheet.create({
   video: {
     flex: 1,
     width: '100%',
+    backgroundColor: '#000',
+    marginBottom: 12,
   },
   buttonContainer: {
     padding: 16,
-    gap: 8,
+    gap: 12,
   },
 });
-
