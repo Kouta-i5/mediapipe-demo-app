@@ -6,7 +6,7 @@ import { PatientListStackParamList } from '../types/navigation';
 
 const Stack = createNativeStackNavigator<PatientListStackParamList>();
 
-    export default function PatientListNavigator() {
+export default function PatientListNavigator() {
   return (
     <Stack.Navigator initialRouteName="PatientList">
       <Stack.Screen name="PatientList" component={PatientListScreen} />
