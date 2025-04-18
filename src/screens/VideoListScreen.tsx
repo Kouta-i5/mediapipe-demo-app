@@ -7,8 +7,11 @@ import {
   ActivityIndicator,
   Alert,
   Button,
-  Linking,
+  Text,
 } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { HomeStackParamList } from '../types/navigation';
 import { getRecords, deleteRecordAndFile } from '../utils/recordStorage';
 import { getPatients } from '../utils/patientStorage'; 
 import { exportToCsv } from '../utils/exportToCsv';
@@ -18,7 +21,10 @@ import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'VideoList'>;
+
 export default function VideoListScreen() {
+  const navigation = useNavigation<NavigationProp>();
   const [records, setRecords] = useState<RecordSchema[]>([]);
   const [patients, setPatients] = useState<PatientSchema[]>([]); 
   const [loading, setLoading] = useState(true);
@@ -150,6 +156,9 @@ export default function VideoListScreen() {
         <ActivityIndicator size="large" color="#007aff" />
       ) : (
         <>
+          <View style={styles.header}>
+            <Button title="CSVを出力して共有" onPress={handleExportCsv} />
+          </View>
           <FlatList
             data={records}
             keyExtractor={(item) => item.uuid}
@@ -162,9 +171,6 @@ export default function VideoListScreen() {
             )}
             contentContainerStyle={styles.list}
           />
-          <View style={styles.buttonContainer}>
-            <Button title="CSVを出力して共有" onPress={handleExportCsv} />
-          </View>
         </>
       )}
     </View>
@@ -172,11 +178,13 @@ export default function VideoListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 16 },
-  list: { paddingBottom: 40 },
-  buttonContainer: {
-    marginBottom: 16,
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
+  list: { padding: 16, paddingBottom: 40 },
 });
 
 

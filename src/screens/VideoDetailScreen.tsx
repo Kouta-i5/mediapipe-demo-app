@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useVideoPlayer, VideoView } from 'expo-video';
@@ -21,55 +22,75 @@ export default function VideoDetailScreen() {
   const { recordId } = route.params;
   const [record, setRecord] = useState<RecordSchema | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [videoUri, setVideoUri] = useState<string>('');
 
   useEffect(() => {
     const fetchRecord = async () => {
-      setLoading(true);
-      const all = await getRecords();
-      const target = all.find((r) => r.uuid === recordId) || null;
-      setRecord(target);
-      setLoading(false);
+      try {
+        setLoading(true);
+        console.log('Fetching record with ID:', recordId);
+        const all = await getRecords();
+        console.log('All records:', all);
+        const target = all.find((r) => r.recordId === recordId) || null;
+        console.log('Found record:', target);
+        if (!target) {
+          setError('該当する動画が見つかりませんでした。');
+          return;
+        }
+        setRecord(target);
+        const uri = target.videoPath.startsWith('file://') || target.videoPath.startsWith('http')
+          ? target.videoPath
+          : FileSystem.documentDirectory + target.videoPath;
+        setVideoUri(uri);
+        console.log('Video URI:', uri);
+      } catch (err) {
+        console.error('動画の取得に失敗しました:', err);
+        setError('動画の取得に失敗しました。');
+      } finally {
+        setLoading(false);
+      }
     };
     fetchRecord();
   }, [recordId]);
+
+  const player = useVideoPlayer(videoUri, (player) => {
+    player.loop = true;
+  });
 
   if (loading) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" />
+        <Text style={styles.debugText}>Loading record ID: {recordId}</Text>
       </View>
     );
   }
 
-  if (!record) {
+  if (error || !record) {
     return (
       <View style={styles.centered}>
-        <Text>該当する動画が見つかりませんでした。</Text>
+        <Text style={styles.errorText}>{error || '該当する動画が見つかりませんでした。'}</Text>
+        <Text style={styles.debugText}>Record ID: {recordId}</Text>
       </View>
     );
   }
-
-  const videoUri = record.videoPath.startsWith('file://') || record.videoPath.startsWith('http')
-    ? record.videoPath
-    : FileSystem.documentDirectory + record.videoPath;
-
-  const player = useVideoPlayer(videoUri, (player) => {
-    player.loop = true;
-    player.play();
-  });
 
   const condition = record.conditions?.[0];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>動画詳細</Text>
+      <Text style={styles.debugText}>Record ID: {recordId}</Text>
 
-      <VideoView
-        style={styles.video}
-        player={player}
-        allowsFullscreen
-        allowsPictureInPicture
-      />
+      {videoUri && (
+        <VideoView
+          style={styles.video}
+          player={player}
+          allowsFullscreen
+          allowsPictureInPicture
+        />
+      )}
 
       <View style={styles.info}>
         <Text style={styles.label}>患者ID: {record.patientId}</Text>
@@ -81,7 +102,6 @@ export default function VideoDetailScreen() {
             <Text style={styles.label}>開脚幅: {condition.legWidth} cm</Text>
           </>
         )}
-        <Text style={styles.label}>動画パス: {record.videoPath}</Text>
       </View>
     </ScrollView>
   );
@@ -99,4 +119,6 @@ const styles = StyleSheet.create({
   },
   info: { marginTop: 8 },
   label: { fontSize: 16, marginBottom: 8 },
+  errorText: { color: 'red', fontSize: 16, textAlign: 'center' },
+  debugText: { fontSize: 12, color: '#666', marginTop: 8 },
 });

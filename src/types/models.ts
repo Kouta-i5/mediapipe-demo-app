@@ -40,6 +40,7 @@ export type RecordCreateSchema = {
 
 export type RecordSchema = {
   uuid: string;
+  recordId: string;    // 表示用ID
   createdAt: string;      // ISO形式
   videoPath: string;      // 動画ファイルパス or URI
   patientId: string;

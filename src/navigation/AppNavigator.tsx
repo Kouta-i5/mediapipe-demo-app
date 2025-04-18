@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeStackNavigator from './HomeStackNavigator';
 import PatientListNavigator from './PatientListNavigator';
-import VideoListScreen from '../screens/VideoListScreen';
+import VideoListNavigator from './VideoListNavigator';
 import { TabParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -29,7 +29,7 @@ export default function AppNavigator() {
       >
         <Tab.Screen name="HomeTab" component={HomeStackNavigator} />
         <Tab.Screen name="PatientsTab" component={PatientListNavigator} />
-        <Tab.Screen name="VideosTab" component={VideoListScreen} />
+        <Tab.Screen name="VideosTab" component={VideoListNavigator} />
       </Tab.Navigator>
     </NavigationContainer>
   );
