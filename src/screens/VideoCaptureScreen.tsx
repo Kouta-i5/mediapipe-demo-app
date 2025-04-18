@@ -1,3 +1,4 @@
+//VideoCaptureScreen.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, Button, Text, Alert } from 'react-native';
 import {

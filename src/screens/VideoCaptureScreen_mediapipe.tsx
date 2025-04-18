@@ -1,3 +1,4 @@
+//VideoCaptureScreen_mediapipe.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, Button, Text } from 'react-native';
 import {
