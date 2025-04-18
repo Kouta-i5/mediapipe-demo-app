@@ -89,7 +89,7 @@ export default function PatientListScreen() {
           keyExtractor={(item) => item.uuid}
           renderItem={renderItem}
           renderHiddenItem={renderHiddenItem}
-          rightOpenValue={-160}      // 左にスワイプして160px分開く
+          rightOpenValue={-175}      // 左にスワイプして160px分開く
           disableRightSwipe={true}   // 左スワイプのみに限定
           contentContainerStyle={{ paddingBottom: 40 }}
         />

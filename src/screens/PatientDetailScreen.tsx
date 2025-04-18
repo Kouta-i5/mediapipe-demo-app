@@ -39,7 +39,7 @@ export default function PatientDetailScreen() {
     const fetchPatient = async () => {
       setLoading(true);
       const all = await getPatients();
-      const target = all.find((p) => p.uuid === patientId) || null;
+      const target = all.find((p) => p.patientId === patientId) || null;
       setPatient(target);
       if (target) {
         setForm({
@@ -97,7 +97,13 @@ export default function PatientDetailScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>患者詳細</Text>
-
+      <View style={styles.buttonRow}>
+        {editMode ? (
+          <Button title="保存" onPress={handleSave} />
+        ) : (
+          <Button title="編集" onPress={() => setEditMode(true)} />
+        )}
+      </View>
       {editMode ? (
         <View style={styles.infoBox}>
           <Text style={styles.label}>名前</Text>
@@ -150,14 +156,6 @@ export default function PatientDetailScreen() {
         </View>
       )}
 
-      <View style={styles.buttonRow}>
-        <Button title="戻る" onPress={() => navigation.goBack()} />
-        {editMode ? (
-          <Button title="保存" onPress={handleSave} />
-        ) : (
-          <Button title="編集" onPress={() => setEditMode(true)} />
-        )}
-      </View>
     </View>
   );
 }
@@ -182,6 +180,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 12,
+    marginBottom: 12,
   },
   error: { color: 'red', textAlign: 'center', fontSize: 16 },
 });
