@@ -1,3 +1,4 @@
+//PatientListScreen.tsx
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -81,7 +82,7 @@ export default function PatientListScreen() {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#007aff" />
       ) : (
         <SwipeListView
           data={patients}

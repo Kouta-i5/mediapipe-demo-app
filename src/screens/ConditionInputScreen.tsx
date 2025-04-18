@@ -3,28 +3,30 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '../types/navigation';
-import { FootCondition, StandingCondition } from '../types/models';
+import { FootCondition, StandingCondition, Condition } from '../types/models';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'ConditionInput'>;
 
 export default function ConditionInputScreen({ navigation, route }: Props) {
-  const [footCondition, setFootCondition] = useState<FootCondition>('平地上立位');
+  const [footCondition, setFootCondition] = useState<FootCondition>('マット上立位');
   const [standingCondition, setStandingCondition] = useState<StandingCondition>('開眼・開脚');
-  const [legWidth, setLegWidth] = useState('30');
+  const [legWidth, setLegWidth] = useState<Condition['legWidth']>(0);
 
   const handleNext = () => {
-    const parsedLegWidth = parseFloat(legWidth);
-    if (isNaN(parsedLegWidth)) {
-      Alert.alert('入力エラー', '開脚幅は数値で入力してください');
+    if (legWidth === 0) {
+      Alert.alert('入力エラー', '開脚幅を入力してください');
       return;
     }
 
     const condition = {
       footCondition,
       standingCondition,
-      legWidth: parsedLegWidth,
+      legWidth,   
     };
 
+    console.log(condition);
+
+    // 動画撮影画面に遷移
     navigation.navigate('VideoCapture', {
       patientId: route.params.patientId,
       condition,
@@ -56,14 +58,15 @@ export default function ConditionInputScreen({ navigation, route }: Props) {
       </Picker>
 
       <Text style={styles.label}>開脚幅（cm）</Text>
-      <TextInput
-        style={styles.input}
-        value={legWidth}
-        onChangeText={setLegWidth}
-        keyboardType="numeric"
-        placeholder="例：30"
-      />
-
+      <Picker
+        selectedValue={legWidth}
+        onValueChange={(itemValue) => setLegWidth(itemValue as Condition['legWidth'])}
+        style={styles.picker}
+      >
+        {Array.from({ length: 100 }, (_, i) => (
+          <Picker.Item key={i} label={`${i}cm`} value={i} />
+        ))}
+      </Picker>
       <View style={styles.buttonContainer}>
         <Button title="次へ（動画撮影）" onPress={handleNext} />
       </View>
@@ -78,14 +81,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 6,
-    marginTop: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 12,
-    fontSize: 16,
     marginTop: 4,
   },
   buttonContainer: {

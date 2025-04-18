@@ -3,13 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import * as FileSystem from 'expo-file-system';
 import { RecordSchema } from '../types/models';
-
 type Props = {
   record: RecordSchema;
+  onShare: (uuid: string) => void;
   onDelete: (uuid: string) => void;
 };
 
-export default function VideoCard({ record, onDelete }: Props) {
+export default function VideoCard({ record, onDelete, onShare }: Props) {
   const uri = record.videoPath.startsWith('file://') ? record.videoPath : FileSystem.documentDirectory + record.videoPath;
   const player = useVideoPlayer(uri, (player) => {
     player.loop = true;
@@ -32,6 +32,12 @@ export default function VideoCard({ record, onDelete }: Props) {
             </>
           )}
         </View>
+        <TouchableOpacity
+          style={styles.downloadButton}
+          onPress={() => onShare(record.uuid)}
+        >
+          <Text style={styles.downloadButtonText}>共有</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={() => onDelete(record.uuid)}
@@ -84,4 +90,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  downloadButton: {
+    backgroundColor: '#007aff',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+  },
+  downloadButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });
+

@@ -11,7 +11,7 @@ export type HomeStackParamList = {
     condition: Condition;
   };
   Confirm: {
-    videoUri: string;
+    videoPath: string;
     patientId: string;
     condition: Condition;
   };

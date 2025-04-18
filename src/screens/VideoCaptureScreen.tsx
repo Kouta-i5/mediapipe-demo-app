@@ -22,7 +22,6 @@ export default function VideoCaptureScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteType>();
   const { patientId, condition } = route.params;
-
   const [hasPermission, setHasPermission] = useState(false);
   const [recording, setRecording] = useState(false);
   const [timer, setTimer] = useState(DURATION_SECONDS);
@@ -56,18 +55,7 @@ export default function VideoCaptureScreen() {
       await camera.current.startRecording({
         onRecordingFinished: (video) => {
           setRecordedVideo(video.path);
-          Alert.alert('録画完了', '動画の録画が完了しました。', [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.navigate('Confirm', {
-                  videoUri: video.path,
-                  patientId,
-                  condition,
-                });
-              },
-            },
-          ]);
+          Alert.alert('録画完了', '動画の録画が完了しました。');
         },
         onRecordingError: (error) => {
           console.error('録画エラー:', error);
@@ -155,7 +143,7 @@ export default function VideoCaptureScreen() {
               title="動画を確認"
               onPress={() =>
                 navigation.navigate('Confirm', {
-                  videoUri: recordedVideo,
+                  videoPath: recordedVideo,
                   patientId,
                   condition,
                 })

@@ -13,12 +13,12 @@ type NavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Confirm'>;
 export default function ConfirmScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
-  const { videoUri, patientId, condition } = route.params as HomeStackParamList['Confirm'];
+  const { videoPath, patientId, condition } = route.params as HomeStackParamList['Confirm'];
 
   const resolvedUri =
-    videoUri.startsWith('file://') || videoUri.startsWith('http')
-      ? videoUri
-      : FileSystem.documentDirectory + videoUri;
+    videoPath.startsWith('file://') || videoPath.startsWith('http')
+      ? videoPath
+      : FileSystem.documentDirectory + videoPath;
 
   const player = useVideoPlayer(resolvedUri, (player) => {
     player.loop = true;
@@ -29,7 +29,7 @@ export default function ConfirmScreen() {
     try {
       await addRecord({
         patientId,
-        videoPath: videoUri, // 相対パスで保存
+        videoPath: videoPath, // 相対パスで保存
         conditions: [condition],
       });
 
